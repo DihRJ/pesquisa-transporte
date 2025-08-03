@@ -16,3 +16,5 @@ bcrypt==4.0.1
 
 # Para produção
 whitenoise==6.5.0
+
+Flask-Mail==0.9.1
