@@ -1,0 +1,18 @@
+# Dependências para deploy em nuvem
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-CORS==4.0.0
+Werkzeug==2.3.7
+gunicorn==21.2.0
+psycopg2-binary==2.9.7
+python-dotenv==1.0.0
+
+# Para geração de relatórios
+reportlab==4.0.4
+openpyxl==3.1.2
+
+# Para segurança
+bcrypt==4.0.1
+
+# Para produção
+whitenoise==6.5.0
