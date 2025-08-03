@@ -1,7 +1,7 @@
 import os
 import sys
 from datetime import timedelta
-# DON"T CHANGE THIS !!!
+# DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory
@@ -10,6 +10,7 @@ from flask_mail import Mail
 
 # Importar instância única do banco de dados
 from src.database import db
+from src.config_cloud import get_database_url
 
 # Importar todos os modelos
 from src.models.user import User
@@ -52,7 +53,10 @@ app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(relatorios_bp, url_prefix='/api')
 
 # Configurar banco de dados
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
+# Configure the SQLAlchemy database URI using the cloud-aware configuration.
+# This will use the DATABASE_URL environment variable when running on Render and
+# fall back to a local SQLite database when no DATABASE_URL is provided.
+app.config['SQLALCHEMY_DATABASE_URI'] = get_database_url()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializar banco de dados único
@@ -90,3 +94,4 @@ def serve(path):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
+
