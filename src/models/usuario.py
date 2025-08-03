@@ -12,7 +12,8 @@ class Usuario(db.Model):
     senha_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     ativo = db.Column(db.Boolean, default=True, nullable=False)
-    data_criacao = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    # Use local time when creating users to respect the configured TZ
+    data_criacao = db.Column(db.DateTime, default=datetime.now, nullable=False)
     ultimo_login = db.Column(db.DateTime)
     token_sessao = db.Column(db.String(255), unique=True)
     
@@ -33,8 +34,9 @@ class Usuario(db.Model):
         self.token_sessao = secrets.token_urlsafe(32)  # Invalida sessões existentes
     
     def fazer_login(self):
-        """Registra o login do usuário"""
-        self.ultimo_login = datetime.utcnow()
+        """Registra o login do usuário usando o horário local"""
+        # Use local time instead of UTC for login timestamps
+        self.ultimo_login = datetime.now()
         self.token_sessao = secrets.token_urlsafe(32)
     
     def to_dict(self):
@@ -81,7 +83,8 @@ class SessaoUsuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     token = db.Column(db.String(255), unique=True, nullable=False)
-    data_criacao = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    # Use local time for session creation timestamps
+    data_criacao = db.Column(db.DateTime, default=datetime.now, nullable=False)
     data_expiracao = db.Column(db.DateTime, nullable=False)
     ativo = db.Column(db.Boolean, default=True, nullable=False)
     ip_address = db.Column(db.String(45))
@@ -92,11 +95,12 @@ class SessaoUsuario(db.Model):
     def __init__(self, usuario_id, duracao_horas=24):
         self.usuario_id = usuario_id
         self.token = secrets.token_urlsafe(32)
-        self.data_expiracao = datetime.utcnow() + timedelta(hours=duracao_horas)
+        # Use local time for the expiration calculation
+        self.data_expiracao = datetime.now() + timedelta(hours=duracao_horas)
     
     def is_valida(self):
-        """Verifica se a sessão ainda é válida"""
-        return self.ativo and datetime.utcnow() < self.data_expiracao
+        """Verifica se a sessão ainda é válida usando horário local"""
+        return self.ativo and datetime.now() < self.data_expiracao
     
     def invalidar(self):
         """Invalida a sessão"""
@@ -104,14 +108,14 @@ class SessaoUsuario(db.Model):
     
     @staticmethod
     def limpar_sessoes_expiradas():
-        """Remove sessões expiradas do banco de dados"""
+        """Remove sessões expiradas do banco de dados usando horário local"""
         sessoes_expiradas = SessaoUsuario.query.filter(
-            SessaoUsuario.data_expiracao < datetime.utcnow()
+            SessaoUsuario.data_expiracao < datetime.now()
         ).all()
-        
+
         for sessao in sessoes_expiradas:
             db.session.delete(sessao)
-        
+
         if sessoes_expiradas:
             db.session.commit()
             print(f"🧹 {len(sessoes_expiradas)} sessões expiradas removidas")

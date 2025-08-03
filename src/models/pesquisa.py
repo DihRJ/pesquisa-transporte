@@ -11,7 +11,8 @@ class Pesquisa(db.Model):
     atendimento = db.Column(db.Integer, nullable=False)   # 1-10
     infraestrutura = db.Column(db.Integer, nullable=False) # 1-10
     observacoes = db.Column(db.Text, nullable=True)
-    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+    # Use the local server time (respecting the TZ environment variable) instead of UTC.
+    data_criacao = db.Column(db.DateTime, default=datetime.now)
     
     def __repr__(self):
         return f'<Pesquisa {self.linha_numero} - {self.data_criacao}>'
@@ -44,3 +45,4 @@ class ContadorLinha(db.Model):
     
     def __repr__(self):
         return f'<ContadorLinha {self.linha_numero}: {self.contador}>'
+

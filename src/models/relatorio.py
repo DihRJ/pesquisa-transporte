@@ -7,7 +7,8 @@ class Relatorio(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     linha_numero = db.Column(db.String(100), nullable=False, index=True)
-    data_criacao = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    # Use local time for report creation date to respect configured timezone
+    data_criacao = db.Column(db.DateTime, default=datetime.now, nullable=False)
     periodo_inicio = db.Column(db.DateTime, nullable=False)
     periodo_fim = db.Column(db.DateTime, nullable=False)
     total_pesquisas = db.Column(db.Integer, nullable=False)
