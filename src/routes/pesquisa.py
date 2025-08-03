@@ -248,7 +248,8 @@ def criar_pesquisa():
             relatorio = Relatorio.criar_relatorio_automatico(nova_pesquisa.linha_numero, pesquisas_linha)
             
             if relatorio:
-                contador.ultimo_envio = datetime.utcnow()
+                # Use local time instead of UTC for the last send timestamp
+                contador.ultimo_envio = datetime.now()
                 db.session.commit()
                 print(f"✅ Relatório automático criado com ID {relatorio.id}")
             else:
@@ -365,7 +366,8 @@ def forcar_relatorio(linha_numero):
             # Atualizar timestamp do último envio
             contador = ContadorLinha.query.filter_by(linha_numero=linha_numero).first()
             if contador:
-                contador.ultimo_envio = datetime.utcnow()
+                # Use local time instead of UTC for the last send timestamp
+                contador.ultimo_envio = datetime.now()
                 db.session.commit()
             
             return jsonify({
