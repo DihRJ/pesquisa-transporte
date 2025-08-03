@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa de Satisfação - Transporte Municipal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .form-group input[type="text"], 
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .rating-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .rating-question {
+            margin-bottom: 25px;
+        }
+
+        .rating-question h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .rating-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .rating-option input[type="radio"] {
+            display: none;
+        }
+
+        .rating-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .rating-option:hover .rating-circle {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .rating-option input[type="radio"]:checked + .rating-circle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .rating-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message, .error-message {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .stats-item {
+            display: inline-block;
+            margin: 0 20px;
+            padding: 10px;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .rating-scale {
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .rating-circle {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .stats-item {
+                margin: 10px;
+                display: block;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚌 Pesquisa de Satisfação</h1>
+            <p>Sistema Municipal de Transporte Coletivo</p>
+        </div>
+
+        <div class="form-container">
+            <form id="pesquisaForm">
+                <div class="form-group">
+                    <label for="linha_numero">Número/Nome da Linha *</label>
+                    <input type="text" id="linha_numero" name="linha_numero" required 
+                           placeholder="Ex: Linha 101, Centro-Bairro, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label for="linha_itinerario">Itinerário/Trajeto</label>
+                    <input type="text" id="linha_itinerario" name="linha_itinerario" 
+                           placeholder="Ex: Terminal Central → Shopping → Universidade">
+                </div>
+
+                <div class="rating-section">
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">Avalie os Aspectos do Serviço</h2>
+                    
+                    <div class="rating-question">
+                        <h3>1. Pontualidade e Cumprimento de Horários</h3>
+                        <p style="color: #666; margin-bottom: 15px;">Como você avalia a pontualidade dos ônibus em relação aos horários divulgados?</p>
+                        <div class="rating-scale">
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="1" id="pont1" required>
+                                <label for="pont1" class="rating-circle">1</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="2" id="pont2">
+                                <label for="pont2" class="rating-circle">2</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="3" id="pont3">
+                                <label for="pont3" class="rating-circle">3</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="4" id="pont4">
+                                <label for="pont4" class="rating-circle">4</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="5" id="pont5">
+                                <label for="pont5" class="rating-circle">5</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="6" id="pont6">
+                                <label for="pont6" class="rating-circle">6</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="7" id="pont7">
+                                <label for="pont7" class="rating-circle">7</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="8" id="pont8">
+                                <label for="pont8" class="rating-circle">8</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="9" id="pont9">
+                                <label for="pont9" class="rating-circle">9</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="pontualidade" value="10" id="pont10">
+                                <label for="pont10" class="rating-circle">10</label>
+                            </div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Totalmente Insatisfeito</span>
+                            <span>Totalmente Satisfeito</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-question">
+                        <h3>2. Frequência e Intervalo entre Ônibus</h3>
+                        <p style="color: #666; margin-bottom: 15px;">Como você avalia a frequência dos ônibus e o tempo de espera nos pontos?</p>
+                        <div class="rating-scale">
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="1" id="freq1" required>
+                                <label for="freq1" class="rating-circle">1</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="2" id="freq2">
+                                <label for="freq2" class="rating-circle">2</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="3" id="freq3">
+                                <label for="freq3" class="rating-circle">3</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="4" id="freq4">
+                                <label for="freq4" class="rating-circle">4</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="5" id="freq5">
+                                <label for="freq5" class="rating-circle">5</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="6" id="freq6">
+                                <label for="freq6" class="rating-circle">6</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="7" id="freq7">
+                                <label for="freq7" class="rating-circle">7</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="8" id="freq8">
+                                <label for="freq8" class="rating-circle">8</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="9" id="freq9">
+                                <label for="freq9" class="rating-circle">9</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="frequencia" value="10" id="freq10">
+                                <label for="freq10" class="rating-circle">10</label>
+                            </div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Totalmente Insatisfeito</span>
+                            <span>Totalmente Satisfeito</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-question">
+                        <h3>3. Conforto e Condições dos Veículos</h3>
+                        <p style="color: #666; margin-bottom: 15px;">Como você avalia o conforto, limpeza e condições gerais dos ônibus?</p>
+                        <div class="rating-scale">
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="1" id="conf1" required>
+                                <label for="conf1" class="rating-circle">1</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="2" id="conf2">
+                                <label for="conf2" class="rating-circle">2</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="3" id="conf3">
+                                <label for="conf3" class="rating-circle">3</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="4" id="conf4">
+                                <label for="conf4" class="rating-circle">4</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="5" id="conf5">
+                                <label for="conf5" class="rating-circle">5</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="6" id="conf6">
+                                <label for="conf6" class="rating-circle">6</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="7" id="conf7">
+                                <label for="conf7" class="rating-circle">7</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="8" id="conf8">
+                                <label for="conf8" class="rating-circle">8</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="9" id="conf9">
+                                <label for="conf9" class="rating-circle">9</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="conforto" value="10" id="conf10">
+                                <label for="conf10" class="rating-circle">10</label>
+                            </div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Totalmente Insatisfeito</span>
+                            <span>Totalmente Satisfeito</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-question">
+                        <h3>4. Qualidade do Atendimento</h3>
+                        <p style="color: #666; margin-bottom: 15px;">Como você avalia a qualidade do atendimento prestado pelos motoristas e cobradores?</p>
+                        <div class="rating-scale">
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="1" id="aten1" required>
+                                <label for="aten1" class="rating-circle">1</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="2" id="aten2">
+                                <label for="aten2" class="rating-circle">2</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="3" id="aten3">
+                                <label for="aten3" class="rating-circle">3</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="4" id="aten4">
+                                <label for="aten4" class="rating-circle">4</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="5" id="aten5">
+                                <label for="aten5" class="rating-circle">5</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="6" id="aten6">
+                                <label for="aten6" class="rating-circle">6</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="7" id="aten7">
+                                <label for="aten7" class="rating-circle">7</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="8" id="aten8">
+                                <label for="aten8" class="rating-circle">8</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="9" id="aten9">
+                                <label for="aten9" class="rating-circle">9</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="atendimento" value="10" id="aten10">
+                                <label for="aten10" class="rating-circle">10</label>
+                            </div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Totalmente Insatisfeito</span>
+                            <span>Totalmente Satisfeito</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-question">
+                        <h3>5. Infraestrutura dos Pontos e Terminais</h3>
+                        <p style="color: #666; margin-bottom: 15px;">Como você avalia a infraestrutura dos pontos de ônibus e terminais (cobertura, bancos, informações, segurança)?</p>
+                        <div class="rating-scale">
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="1" id="infra1" required>
+                                <label for="infra1" class="rating-circle">1</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="2" id="infra2">
+                                <label for="infra2" class="rating-circle">2</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="3" id="infra3">
+                                <label for="infra3" class="rating-circle">3</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="4" id="infra4">
+                                <label for="infra4" class="rating-circle">4</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="5" id="infra5">
+                                <label for="infra5" class="rating-circle">5</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="6" id="infra6">
+                                <label for="infra6" class="rating-circle">6</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="7" id="infra7">
+                                <label for="infra7" class="rating-circle">7</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="8" id="infra8">
+                                <label for="infra8" class="rating-circle">8</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="9" id="infra9">
+                                <label for="infra9" class="rating-circle">9</label>
+                            </div>
+                            <div class="rating-option">
+                                <input type="radio" name="infraestrutura" value="10" id="infra10">
+                                <label for="infra10" class="rating-circle">10</label>
+                            </div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Totalmente Insatisfeito</span>
+                            <span>Totalmente Satisfeito</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observacoes">Observações Adicionais</label>
+                    <textarea id="observacoes" name="observacoes" rows="4" 
+                              placeholder="Espaço para comentários e sugestões de melhoria..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Enviar Pesquisa
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Enviando sua pesquisa...</p>
+            </div>
+
+            <div id="message"></div>
+
+            <div class="stats-section" id="statsSection" style="display: none;">
+                <h3 style="margin-bottom: 20px; color: #2c3e50;">Estatísticas do Sistema</h3>
+                <div class="stats-item">
+                    <div class="stats-number" id="totalPesquisas">0</div>
+                    <div class="stats-label">Total de Pesquisas</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-number" id="totalLinhas">0</div>
+                    <div class="stats-label">Linhas Avaliadas</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-number" id="proximoRelatorio">-</div>
+                    <div class="stats-label">Próximo Relatório</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('pesquisaForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const messageDiv = document.getElementById('message');
+            const statsSection = document.getElementById('statsSection');
+
+            // Carregar estatísticas iniciais
+            carregarEstatisticas();
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Mostrar loading
+                submitBtn.disabled = true;
+                loading.style.display = 'block';
+                messageDiv.innerHTML = '';
+
+                // Coletar dados do formulário
+                const formData = new FormData(form);
+                const data = {
+                    linha_numero: formData.get('linha_numero'),
+                    linha_itinerario: formData.get('linha_itinerario'),
+                    pontualidade: parseInt(formData.get('pontualidade')),
+                    frequencia: parseInt(formData.get('frequencia')),
+                    conforto: parseInt(formData.get('conforto')),
+                    atendimento: parseInt(formData.get('atendimento')),
+                    infraestrutura: parseInt(formData.get('infraestrutura')),
+                    observacoes: formData.get('observacoes')
+                };
+
+                try {
+                    const response = await fetch('/api/pesquisas', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.innerHTML = `
+                            <div class="success-message">
+                                <h3>✅ Pesquisa enviada com sucesso!</h3>
+                                <p>Obrigado por sua participação. Sua opinião é muito importante para melhorar o transporte público.</p>
+                                <p><strong>Linha:</strong> ${result.pesquisa.linha_numero}</p>
+                                <p><strong>Total de pesquisas desta linha:</strong> ${result.total_linha}</p>
+                                <p><strong>Próximo relatório em:</strong> ${result.proximo_relatorio} pesquisas</p>
+                            </div>
+                        `;
+                        
+                        // Limpar formulário
+                        form.reset();
+                        
+                        // Atualizar estatísticas
+                        carregarEstatisticas();
+                        
+                        // Scroll para a mensagem
+                        messageDiv.scrollIntoView({ behavior: 'smooth' });
+                        
+                    } else {
+                        throw new Error(result.erro || 'Erro ao enviar pesquisa');
+                    }
+
+                } catch (error) {
+                    messageDiv.innerHTML = `
+                        <div class="error-message">
+                            <h3>❌ Erro ao enviar pesquisa</h3>
+                            <p>${error.message}</p>
+                            <p>Por favor, tente novamente.</p>
+                        </div>
+                    `;
+                } finally {
+                    // Esconder loading
+                    loading.style.display = 'none';
+                    submitBtn.disabled = false;
+                }
+            });
+
+            async function carregarEstatisticas() {
+                try {
+                    const response = await fetch('/api/estatisticas');
+                    const stats = await response.json();
+                    
+                    if (response.ok) {
+                        document.getElementById('totalPesquisas').textContent = stats.total_pesquisas;
+                        document.getElementById('totalLinhas').textContent = stats.total_linhas;
+                        
+                        // Calcular próximo relatório baseado na linha com mais pesquisas
+                        let proximoRelatorio = '-';
+                        if (stats.linhas && stats.linhas.length > 0) {
+                            const linhaMaisProxima = stats.linhas.reduce((prev, current) => {
+                                const proximoPrev = 10 - (prev.total_pesquisas % 10);
+                                const proximoCurrent = 10 - (current.total_pesquisas % 10);
+                                return proximoPrev < proximoCurrent ? prev : current;
+                            });
+                            proximoRelatorio = 10 - (linhaMaisProxima.total_pesquisas % 10);
+                            if (proximoRelatorio === 10) proximoRelatorio = 0;
+                        }
+                        
+                        document.getElementById('proximoRelatorio').textContent = proximoRelatorio;
+                        statsSection.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar estatísticas:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

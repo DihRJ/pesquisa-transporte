@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração - Sistema de Satisfação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            min-height: 500px;
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn.success {
+            background: #28a745;
+        }
+
+        .btn.success:hover {
+            background: #218838;
+        }
+
+        .btn.danger {
+            background: #dc3545;
+        }
+
+        .btn.danger:hover {
+            background: #c82333;
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .badge.admin {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .badge.user {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge.active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .badge.inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: start;
+            }
+
+            .table {
+                font-size: 14px;
+            }
+
+            .table th,
+            .table td {
+                padding: 10px;
+            }
+
+            .modal-content {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>⚙️ Painel de Administração</h1>
+            <div class="header-actions">
+                <a href="/relatorios" class="header-btn">📊 Ver Relatórios</a>
+                <span id="adminName">Carregando...</span>
+                <button class="header-btn" onclick="logout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Estatísticas -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsuarios">-</div>
+                <div class="stat-label">Total de Usuários</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalRelatorios">-</div>
+                <div class="stat-label">Total de Relatórios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalLinhas">-</div>
+                <div class="stat-label">Linhas Avaliadas</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('usuarios')">👥 Usuários</button>
+            <button class="tab" onclick="showTab('relatorios')">📊 Relatórios</button>
+            <button class="tab" onclick="showTab('configuracoes')">⚙️ Configurações</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- Tab Usuários -->
+            <div id="usuarios" class="tab-panel active">
+                <div class="section-header">
+                    <h2 class="section-title">Gerenciar Usuários</h2>
+                    <button class="btn success" onclick="showCreateUserModal()">➕ Novo Usuário</button>
+                </div>
+
+                <div id="usuariosContent">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Carregando usuários...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Relatórios -->
+            <div id="relatorios" class="tab-panel">
+                <div class="section-header">
+                    <h2 class="section-title">Estatísticas de Relatórios</h2>
+                </div>
+
+                <div id="relatoriosContent">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Carregando estatísticas...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Configurações -->
+            <div id="configuracoes" class="tab-panel">
+                <div class="section-header">
+                    <h2 class="section-title">Configurações do Sistema</h2>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha do Administrador</label>
+                    <button class="btn" onclick="showChangePasswordModal()">🔑 Alterar Senha</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Informações do Sistema</label>
+                    <p>Sistema de Pesquisa de Satisfação do Transporte Municipal</p>
+                    <p>Administrador: dih.al@hotmail.com</p>
+                    <p>Versão: 1.0.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Criar/Editar Usuário -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="userModalTitle">Novo Usuário</h3>
+                <button class="close" onclick="closeUserModal()">&times;</button>
+            </div>
+
+            <div id="userModalAlert"></div>
+
+            <form id="userForm">
+                <input type="hidden" id="userId" name="userId">
+                
+                <div class="form-group">
+                    <label for="userNome">Nome *</label>
+                    <input type="text" id="userNome" name="nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="userEmail">E-mail *</label>
+                    <input type="email" id="userEmail" name="email" required>
+                </div>
+
+                <div class="form-group" id="passwordGroup">
+                    <label for="userSenha">Senha *</label>
+                    <input type="password" id="userSenha" name="senha" required>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="userIsAdmin" name="is_admin">
+                        <label for="userIsAdmin">Usuário Administrador</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="userAtivo" name="ativo" checked>
+                        <label for="userAtivo">Usuário Ativo</label>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: end;">
+                    <button type="button" class="btn secondary" onclick="closeUserModal()">Cancelar</button>
+                    <button type="submit" class="btn success" id="userSubmitBtn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Alterar Senha -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Alterar Senha</h3>
+                <button class="close" onclick="closePasswordModal()">&times;</button>
+            </div>
+
+            <div id="passwordModalAlert"></div>
+
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="senhaAtual">Senha Atual *</label>
+                    <input type="password" id="senhaAtual" name="senha_atual" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="novaSenha">Nova Senha *</label>
+                    <input type="password" id="novaSenha" name="nova_senha" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmarSenha">Confirmar Nova Senha *</label>
+                    <input type="password" id="confirmarSenha" name="confirmar_senha" required>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: end;">
+                    <button type="button" class="btn secondary" onclick="closePasswordModal()">Cancelar</button>
+                    <button type="submit" class="btn success">Alterar Senha</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'usuarios';
+        let usuarios = [];
+        let editingUserId = null;
+
+        // Verificar autenticação ao carregar
+        window.addEventListener('load', async function() {
+            await verificarAutenticacao();
+            await carregarEstatisticas();
+            await carregarUsuarios();
+        });
+
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth/verificar-sessao', {
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (!result.logado || !result.usuario.is_admin) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                document.getElementById('adminName').textContent = result.usuario.nome;
+
+            } catch (error) {
+                console.error('Erro na verificação:', error);
+                window.location.href = '/login';
+            }
+        }
+
+        async function carregarEstatisticas() {
+            try {
+                const [usuariosRes, relatoriosRes] = await Promise.all([
+                    fetch('/api/auth/usuarios', { credentials: 'include' }),
+                    fetch('/api/relatorios/estatisticas', { credentials: 'include' })
+                ]);
+
+                if (usuariosRes.ok) {
+                    const usuariosData = await usuariosRes.json();
+                    document.getElementById('totalUsuarios').textContent = usuariosData.total;
+                }
+
+                if (relatoriosRes.ok) {
+                    const relatoriosData = await relatoriosRes.json();
+                    document.getElementById('totalRelatorios').textContent = relatoriosData.total_relatorios;
+                    document.getElementById('totalLinhas').textContent = relatoriosData.total_linhas;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        async function carregarUsuarios() {
+            const content = document.getElementById('usuariosContent');
+            content.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando usuários...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/auth/usuarios', {
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    usuarios = data.usuarios;
+                    renderizarUsuarios();
+                } else {
+                    throw new Error('Erro ao carregar usuários');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                content.innerHTML = `
+                    <div class="alert error">
+                        Erro ao carregar usuários. Tente novamente.
+                    </div>
+                `;
+            }
+        }
+
+        function renderizarUsuarios() {
+            const content = document.getElementById('usuariosContent');
+            
+            if (usuarios.length === 0) {
+                content.innerHTML = '<p>Nenhum usuário encontrado.</p>';
+                return;
+            }
+
+            const tableHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Criado em</th>
+                            <th>Último Login</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${usuarios.map(usuario => `
+                            <tr>
+                                <td>${usuario.nome}</td>
+                                <td>${usuario.email}</td>
+                                <td><span class="badge ${usuario.is_admin ? 'admin' : 'user'}">${usuario.is_admin ? 'Admin' : 'Usuário'}</span></td>
+                                <td><span class="badge ${usuario.ativo ? 'active' : 'inactive'}">${usuario.ativo ? 'Ativo' : 'Inativo'}</span></td>
+                                <td>${new Date(usuario.data_criacao).toLocaleDateString('pt-BR')}</td>
+                                <td>${usuario.ultimo_login ? new Date(usuario.ultimo_login).toLocaleDateString('pt-BR') : 'Nunca'}</td>
+                                <td>
+                                    <button class="btn" onclick="editarUsuario(${usuario.id})" style="padding: 6px 12px; font-size: 12px;">✏️ Editar</button>
+                                    ${usuario.email !== 'dih.al@hotmail.com' ? `<button class="btn danger" onclick="confirmarExclusao(${usuario.id})" style="padding: 6px 12px; font-size: 12px; margin-left: 5px;">🗑️ Excluir</button>` : ''}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            content.innerHTML = tableHTML;
+        }
+
+        function showTab(tabName) {
+            // Atualizar tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            currentTab = tabName;
+
+            // Carregar conteúdo específico da tab
+            if (tabName === 'relatorios') {
+                carregarEstatisticasRelatorios();
+            }
+        }
+
+        async function carregarEstatisticasRelatorios() {
+            const content = document.getElementById('relatoriosContent');
+            content.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando estatísticas...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/relatorios/estatisticas', {
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    const tableHTML = `
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Linha</th>
+                                    <th>Total de Relatórios</th>
+                                    <th>Média Geral</th>
+                                    <th>Último Relatório</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.linhas.map(linha => `
+                                    <tr>
+                                        <td>${linha.linha}</td>
+                                        <td>${linha.total_relatorios}</td>
+                                        <td>${linha.media_geral}/10</td>
+                                        <td>${linha.ultimo_relatorio ? new Date(linha.ultimo_relatorio).toLocaleDateString('pt-BR') : 'Nunca'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+
+                    content.innerHTML = tableHTML;
+                } else {
+                    throw new Error('Erro ao carregar estatísticas');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                content.innerHTML = `
+                    <div class="alert error">
+                        Erro ao carregar estatísticas. Tente novamente.
+                    </div>
+                `;
+            }
+        }
+
+        function showCreateUserModal() {
+            editingUserId = null;
+            document.getElementById('userModalTitle').textContent = 'Novo Usuário';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('passwordGroup').style.display = 'block';
+            document.getElementById('userSenha').required = true;
+            document.getElementById('userAtivo').checked = true;
+            document.getElementById('userModalAlert').innerHTML = '';
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function editarUsuario(id) {
+            const usuario = usuarios.find(u => u.id === id);
+            if (!usuario) return;
+
+            editingUserId = id;
+            document.getElementById('userModalTitle').textContent = 'Editar Usuário';
+            document.getElementById('userId').value = usuario.id;
+            document.getElementById('userNome').value = usuario.nome;
+            document.getElementById('userEmail').value = usuario.email;
+            document.getElementById('userIsAdmin').checked = usuario.is_admin;
+            document.getElementById('userAtivo').checked = usuario.ativo;
+            document.getElementById('passwordGroup').style.display = 'none';
+            document.getElementById('userSenha').required = false;
+            document.getElementById('userModalAlert').innerHTML = '';
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('show');
+        }
+
+        function showChangePasswordModal() {
+            document.getElementById('passwordForm').reset();
+            document.getElementById('passwordModalAlert').innerHTML = '';
+            document.getElementById('passwordModal').classList.add('show');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('show');
+        }
+
+        // Submissão do formulário de usuário
+        document.getElementById('userForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('userSubmitBtn');
+            const alertDiv = document.getElementById('userModalAlert');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Salvando...';
+            alertDiv.innerHTML = '';
+            
+            try {
+                const formData = new FormData(this);
+                const data = {
+                    nome: formData.get('nome'),
+                    email: formData.get('email'),
+                    is_admin: formData.has('is_admin'),
+                    ativo: formData.has('ativo')
+                };
+                
+                if (formData.get('senha')) {
+                    data.senha = formData.get('senha');
+                }
+                
+                const url = editingUserId ? `/api/auth/usuarios/${editingUserId}` : '/api/auth/usuarios';
+                const method = editingUserId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alertDiv.innerHTML = `<div class="alert success">${result.mensagem}</div>`;
+                    setTimeout(() => {
+                        closeUserModal();
+                        carregarUsuarios();
+                        carregarEstatisticas();
+                    }, 1500);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">${result.erro}</div>`;
+                }
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                alertDiv.innerHTML = `<div class="alert error">Erro de conexão. Tente novamente.</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Salvar';
+            }
+        });
+
+        // Submissão do formulário de senha
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const alertDiv = document.getElementById('passwordModalAlert');
+            const formData = new FormData(this);
+            
+            // Verificar se as senhas coincidem
+            if (formData.get('nova_senha') !== formData.get('confirmar_senha')) {
+                alertDiv.innerHTML = `<div class="alert error">As senhas não coincidem.</div>`;
+                return;
+            }
+            
+            alertDiv.innerHTML = '';
+            
+            try {
+                const data = {
+                    senha_atual: formData.get('senha_atual'),
+                    nova_senha: formData.get('nova_senha')
+                };
+                
+                const response = await fetch('/api/auth/alterar-senha', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alertDiv.innerHTML = `<div class="alert success">${result.mensagem}</div>`;
+                    setTimeout(() => {
+                        closePasswordModal();
+                    }, 1500);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">${result.erro}</div>`;
+                }
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                alertDiv.innerHTML = `<div class="alert error">Erro de conexão. Tente novamente.</div>`;
+            }
+        });
+
+        async function confirmarExclusao(id) {
+            const usuario = usuarios.find(u => u.id === id);
+            if (!usuario) return;
+
+            if (confirm(`Tem certeza que deseja excluir o usuário "${usuario.nome}"?`)) {
+                try {
+                    const response = await fetch(`/api/auth/usuarios/${id}`, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert(result.mensagem);
+                        carregarUsuarios();
+                        carregarEstatisticas();
+                    } else {
+                        alert(result.erro);
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert('Erro de conexão. Tente novamente.');
+                }
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                localStorage.removeItem('authToken');
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Erro no logout:', error);
+                window.location.href = '/login';
+            }
+        }
+
+        // Fechar modais ao clicar fora
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
+
