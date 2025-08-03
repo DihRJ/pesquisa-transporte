@@ -4,8 +4,11 @@ Flask-SQLAlchemy==3.0.5
 Flask-CORS==4.0.0
 Werkzeug==2.3.7
 gunicorn==21.2.0
-psycopg2-binary==2.9.7
+psycopg2-binary==2.9.10
 python-dotenv==1.0.0
+
+# Email support
+Flask-Mail==0.9.1
 
 # Para geração de relatórios
 reportlab==4.0.4
@@ -17,4 +20,3 @@ bcrypt==4.0.1
 # Para produção
 whitenoise==6.5.0
 
-Flask-Mail==0.9.1
