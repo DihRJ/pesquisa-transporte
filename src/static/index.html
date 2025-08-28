@@ -288,8 +288,34 @@
             <form id="pesquisaForm">
                 <div class="form-group">
                     <label for="linha_numero">Número/Nome da Linha *</label>
-                    <input type="text" id="linha_numero" name="linha_numero" required 
-                           placeholder="Ex: Linha 101, Centro-Bairro, etc.">
+                    <!--
+                      Alteramos este campo de entrada de texto para um campo de seleção
+                      (dropdown) para que o usuário escolha uma das linhas predefinidas.
+                      Cada opção corresponde a uma linha de ônibus específica do sistema
+                      municipal de transporte. O valor da opção é igual ao seu texto
+                      exibido para facilitar o envio do formulário.
+                    -->
+                    <select id="linha_numero" name="linha_numero" required>
+                        <option value="" disabled selected>Selecione a linha</option>
+                        <option value="201 - Araruama x São Vicente (via hospício)">201 - Araruama x São Vicente (via hospício)</option>
+                        <option value="203 - Araruama x Itatiquara (Praça Bandeira)">203 - Araruama x Itatiquara (Praça Bandeira)</option>
+                        <option value="205 - Circular x Morro Grande (Praça Bandeira)">205 - Circular x Morro Grande (Praça Bandeira)</option>
+                        <option value="206 - Circular x Centro (XV de Novembro)">206 - Circular x Centro (XV de Novembro)</option>
+                        <option value="207 - Araruama x São Vicente (Morro Grande)">207 - Araruama x São Vicente (Morro Grande)</option>
+                        <option value="208 - Araruama x Fonte dos Leites (Hospício)">208 - Araruama x Fonte dos Leites (Hospício)</option>
+                        <option value="213 - Araruama x Boa Vista">213 - Araruama x Boa Vista</option>
+                        <option value="216 - Araruama x Regame">216 - Araruama x Regame</option>
+                        <option value="235 - Araruama x São Vicente (Nova Carvalho)">235 - Araruama x São Vicente (Nova Carvalho)</option>
+                        <option value="239 - Circular x Morro Grande (Bom Jardim)">239 - Circular x Morro Grande (Bom Jardim)</option>
+                        <option value="240 - Circular x Morro Grande (Taracatu)">240 - Circular x Morro Grande (Taracatu)</option>
+                        <option value="243 - Araruama x Fonte dos Leites (Praça Bandeira)">243 - Araruama x Fonte dos Leites (Praça Bandeira)</option>
+                        <option value="245 - Rodoviária x Parati">245 - Rodoviária x Parati</option>
+                        <option value="253 - São Vicente x Sobora">253 - São Vicente x Sobora</option>
+                        <option value="254 - Araruama x Catuba">254 - Araruama x Catuba</option>
+                        <option value="255 - São Vicente x Barro Vermelho">255 - São Vicente x Barro Vermelho</option>
+                        <option value="259 - Araruama x Fazendinha (Colônia Engenheiros)">259 - Araruama x Fazendinha (Colônia Engenheiros)</option>
+                        <option value="260 - Araruama x Fazendinha (Alves Branco)">260 - Araruama x Fazendinha (Alves Branco)</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
